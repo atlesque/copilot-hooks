@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "type": "command",
+        "command": "~/.copilot/hooks/scripts/copilot-notify.sh"
+      }
+    ],
+    "PreToolUse": [
+      {
+        "type": "command",
+        "command": "~/.copilot/hooks/scripts/copilot-notify.sh"
+      }
+    ]
+  }
+}
