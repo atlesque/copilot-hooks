@@ -4,6 +4,10 @@ set -euo pipefail
 NTFY_TOPIC="alexander-copilot-vscode-7f3d9c2a91b84e6aa1"
 NTFY_URL="https://ntfy.sh/$NTFY_TOPIC"
 
+# Which events to notify on. Set to true to enable, false to disable.
+NOTIFY_ON_STOP=true
+NOTIFY_ON_PRE_TOOL_USE=false
+
 # Cooldown in seconds for noisy PreToolUse notifications.
 PRE_TOOL_USE_COOLDOWN=120
 
@@ -49,20 +53,24 @@ cooldown_allows_pretooluse() {
 
 case "$event" in
   Stop)
-    send_notification \
-      "Copilot agent stopped" \
-      "The VS Code Copilot agent has finished output."
+    if [[ "$NOTIFY_ON_STOP" == "true" ]]; then
+      send_notification \
+        "Copilot agent stopped" \
+        "The VS Code Copilot agent has finished output."
+    fi
     ;;
 
   PreToolUse)
-    case "$tool_name" in
-      terminal|run_in_terminal|edit|apply_patch|create_file|delete_file|replace_string_in_file)
-        if cooldown_allows_pretooluse; then
-          send_notification \
-            "Copilot needs attention" \
-            "Copilot is about to use tool: $tool_name. It may need approval or feedback."
-        fi
-        ;;
-    esac
+    if [[ "$NOTIFY_ON_PRE_TOOL_USE" == "true" ]]; then
+      case "$tool_name" in
+        terminal|run_in_terminal|edit|apply_patch|create_file|delete_file|replace_string_in_file)
+          if cooldown_allows_pretooluse; then
+            send_notification \
+              "Copilot needs attention" \
+              "Copilot is about to use tool: $tool_name. It may need approval or feedback."
+          fi
+          ;;
+      esac
+    fi
     ;;
 esac
