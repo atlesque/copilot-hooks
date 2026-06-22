@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-NTFY_TOPIC="alexander-copilot-vscode-7f3d9c2a91b84e6aa1"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+HOOKS_DIR="$(dirname "$SCRIPT_DIR")"
+
+if [[ -f "$HOOKS_DIR/.env" ]]; then
+  source "$HOOKS_DIR/.env"
+fi
+
 NTFY_URL="https://ntfy.sh/$NTFY_TOPIC"
 
 # Which events to notify on. Set to true to enable, false to disable.
