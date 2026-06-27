@@ -8,7 +8,12 @@ if [[ -f "$HOOKS_DIR/.env" ]]; then
   source "$HOOKS_DIR/.env"
 fi
 
-NTFY_URL="https://ntfy.sh/$NTFY_TOPIC"
+# If either NTFY_SERVER or NTFY_TOPIC is empty, notifications are disabled.
+if [[ -z "${NTFY_SERVER:-}" || -z "${NTFY_TOPIC:-}" ]]; then
+  exit 0
+fi
+
+NTFY_URL="$NTFY_SERVER/$NTFY_TOPIC"
 
 # Which events to notify on. Set to true to enable, false to disable.
 NOTIFY_ON_STOP=true
@@ -32,10 +37,16 @@ now="$(date +%s)"
 send_notification() {
   local title="$1"
   local message="$2"
+  local auth_header=()
+
+  if [[ -n "${NTFY_TOKEN:-}" ]]; then
+    auth_header=(-H "Authorization: Bearer $NTFY_TOKEN")
+  fi
 
   curl -s \
     -H "Title: $title" \
     -H "Priority: default" \
+    "${auth_header[@]}" \
     -d "$message" \
     "$NTFY_URL" >/dev/null
 }

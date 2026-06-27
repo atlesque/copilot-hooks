@@ -6,8 +6,8 @@ VS Code Copilot hook scripts that send push notifications via [ntfy.sh](https://
 
 | File | Purpose |
 |------|---------|
-| `.env.example` | Template for your private ntfy topic |
-| `.env` | Your private ntfy topic (gitignored) |
+| `.env.example` | Template for your private ntfy server, topic, and token |
+| `.env` | Your private ntfy credentials (gitignored) |
 | `copilot-notify.json` | Hook configuration — registers `Stop` and `PreToolUse` events |
 | `scripts/copilot-notify.sh` | Shell script that parses the hook payload and sends ntfy notifications |
 
@@ -25,15 +25,23 @@ Then restart VS Code. Copilot will pick up the hook config from `~/.copilot/hook
 
 ## Configuration
 
-Copy `.env.example` to `.env` and set your own ntfy topic:
+Copy `.env.example` to `.env` and set your ntfy server details:
 
 ```bash
 cp .env.example .env
-# Then edit .env and set your topic:
-# NTFY_TOPIC=your-topic-here
+# Then edit .env and set your values:
+# NTFY_SERVER="https://ntfy.sh"
+# NTFY_TOPIC="your-topic-here"
+# NTFY_TOKEN="tk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"   # optional — only if your server requires auth
 ```
 
-The `.env` file is gitignored — your topic stays private.
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `NTFY_SERVER` | Yes | ntfy.sh server URL (e.g. `https://ntfy.sh`). Leave empty to disable all notifications. |
+| `NTFY_TOPIC` | Yes | ntfy.sh topic name. Leave empty to disable all notifications. |
+| `NTFY_TOKEN` | No | ntfy.sh access token for authenticated servers. |
+
+The `.env` file is gitignored — your credentials stay private.
 
 The script requires `jq` and `curl` to be installed:
 
